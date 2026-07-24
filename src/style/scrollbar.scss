@@ -1,0 +1,110 @@
+/**
+ * ===================================================================
+ * 全局滚动条样式文件 (src/style/scrollbar.scss)
+ * ===================================================================
+ * 作用：
+ *   - 隐藏 body 全局滚动条
+ *   - 滚动条只存在于应用内部容器
+ *   - 纤细简约的滚动条样式
+ *   - 低饱和度配色，适配简约高级风格
+ * ===================================================================
+ */
+
+/* ==============================
+ * 1. 隐藏 body 全局滚动条
+ * 所有滚动行为限制在应用内部容器
+ * ============================== */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; // 禁止 body 层出现滚动条
+  background: transparent; // 透明背景，配合 Electron 透明窗口
+}
+
+/* ==============================
+ * 2. 应用根容器撑满全屏
+ * ============================== */
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; // 根容器不产生滚动
+  position: relative;
+}
+
+/* ==============================
+ * 3. Webkit 内核自定义滚动条样式
+ * 适用于 Chrome / Edge / Electron 等 Webkit 内核浏览器
+ * 纤细简约风格
+ * ============================== */
+
+/* 滚动条整体轨道 */
+::-webkit-scrollbar {
+  width: 5px;    // 垂直滚动条宽度（更纤细）
+  height: 5px;   // 水平滚动条高度
+}
+
+/* 滚动条轨道背景 */
+::-webkit-scrollbar-track {
+  background: rgba(240, 242, 248, 0.6); // 浅色半透明轨道
+  border-radius: 2.5px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(74, 144, 226, 0.4) 0%,   // 蓝色渐变顶部（低饱和度）
+    rgba(123, 104, 238, 0.35) 100%  // 紫色渐变底部
+  );
+  border-radius: 2.5px;
+  transition: background 0.3s ease;
+
+  &:hover {
+    // 鼠标悬停时滑块稍微变亮
+    background: linear-gradient(
+      180deg,
+      rgba(74, 144, 226, 0.6) 0%,
+      rgba(123, 104, 238, 0.5) 100%
+    );
+  }
+
+  &:active {
+    // 点击时更明显
+    background: linear-gradient(
+      180deg,
+      rgba(74, 144, 226, 0.7) 0%,
+      rgba(123, 104, 238, 0.6) 100%
+    );
+  }
+}
+
+/* 滚动条角落（水平与垂直滚动条交汇处） */
+::-webkit-scrollbar-corner {
+  background: rgba(240, 242, 248, 0.6);
+}
+
+/* ==============================
+ * 4. Firefox 滚动条样式
+ * ============================== */
+* {
+  scrollbar-width: thin;                     // 细滚动条
+  scrollbar-color: rgba(74, 144, 226, 0.4)   // 滑块颜色（低饱和度蓝）
+                 rgba(240, 242, 248, 0.6);   // 轨道颜色
+}
+
+/* ==============================
+ * 5. 应用内部滚动容器通用类
+ * 用于包裹页面内容，使滚动条只在容器内显示
+ * ============================== */
+.app-scroll-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;      // 垂直方向允许滚动
+  overflow-x: hidden;    // 水平方向禁止滚动
+  position: relative;
+  // 平滑滚动
+  scroll-behavior: smooth;
+}
