@@ -1,4 +1,4 @@
-# CyberTech System
+# LCU-Util
 
 [English Version](README.en.md)
 
@@ -140,7 +140,7 @@ https://developer.riotgames.com/docs/lol#routing-values_regional-routing-values
 
 
 
-# CyberTech System
+# LCU-Util
 
 基于 Vue3 + Electron + Element-Plus 开发的现代化桌面应用。
 

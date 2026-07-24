@@ -1,6 +1,6 @@
 export default {
   app: {
-    name: 'CyberTech System',
+    name: 'LCU-Util',
   },
   nav: {
     home: '主页',
@@ -22,7 +22,7 @@ export default {
       title: '正在等待 League Client...',
       subtitle: '请确保英雄联盟客户端已启动',
     },
-    footer: 'CyberTech System &copy; {{year}}',
+    footer: 'LCU-Util &copy; {{year}}',
   },
   summoner: {
     level: '等级 {{level}}',

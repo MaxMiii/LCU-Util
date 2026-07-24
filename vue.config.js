@@ -110,7 +110,7 @@ module.exports = defineConfig({
       // 输出文件
       filename: 'index.html',
       // 页面标题
-      title: 'CyberTech System',
+      title: 'LCU-Util',
       // 注入到模板中的额外资源
       chunks: ['chunk-vendors', 'chunk-common', 'index']
     }

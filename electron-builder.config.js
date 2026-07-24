@@ -14,9 +14,9 @@ module.exports = {
   /**
    * 应用基本信息
    */
-  productName: "CyberTech System",      // 应用名称
-  appId: "com.cybertech.system",       // 应用 ID
-  copyright: "Copyright © 2026 CyberTech", // 版权声明
+  productName: "LCU-Util",      // 应用名称
+  appId: "com.lcu-util.app",       // 应用 ID
+  copyright: "Copyright © 2026 LCU-Util", // 版权声明
 
   /**
    * 构建配置
@@ -37,8 +37,8 @@ module.exports = {
       }
     ],
     icon: "public/favicon.ico",         // 应用图标
-    publisherName: "CyberTech",         // 发布商名称
-    legalTrademarks: "CyberTech System is a trademark of CyberTech"
+    publisherName: "LCU-Util",         // 发布商名称
+    legalTrademarks: "LCU-Util is a trademark of LCU-Util"
   },
 
   /**
@@ -50,7 +50,6 @@ module.exports = {
     allowToChangeInstallationDirectory: true, // 允许更改安装目录
     createDesktopShortcut: true,        // 创建桌面快捷方式
     createStartMenuShortcut: true,      // 创建开始菜单快捷方式
-    requestedExecutionLevel: 'requireAdministrator', // 要求管理员权限运行
     installerIcon: "public/favicon.ico", // 安装程序图标
     uninstallerIcon: "public/favicon.ico" // 卸载程序图标
   },
@@ -112,7 +111,7 @@ module.exports = {
     hardenedRuntime: true,
     gatekeeperAssess: false,
     entitlements: "build/entitlements.mac.plist",
-    "entitlements-inherit": "build/entitlements.mac.plist"
+    entitlementsInherit: "build/entitlements.mac.plist"
   },
 
   /**
@@ -121,10 +120,10 @@ module.exports = {
   linux: {
     target: ["AppImage"],
     icon: "public/favicon.ico",
-    maintainer: "CyberTech",
-    vendor: "CyberTech",
-    synopsis: "CyberTech Management System",
-    description: "赛博科技管理系统 - 基于 Vue3 + Electron + Element-Plus 开发的现代化桌面应用",
+    maintainer: "LCU-Util",
+    vendor: "LCU-Util",
+    synopsis: "LCU-Util",
+    description: "LCU-Util - 基于 Vue3 + Electron + Element-Plus 的桌面应用",
     category: "Office"
   }
 }

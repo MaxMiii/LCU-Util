@@ -1,6 +1,6 @@
 export default {
   app: {
-    name: 'CyberTech System',
+    name: 'LCU-Util',
   },
   nav: {
     home: 'Home',
@@ -22,7 +22,7 @@ export default {
       title: 'Waiting for League Client...',
       subtitle: 'Please make sure League of Legends client is running',
     },
-    footer: 'CyberTech System &copy; {{year}}',
+    footer: 'LCU-Util &copy; {{year}}',
   },
   summoner: {
     level: 'Level {{level}}',

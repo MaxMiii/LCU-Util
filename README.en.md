@@ -1,4 +1,4 @@
-# CyberTech System
+# LCU-Util
 
 [中文版本](README.md)
 

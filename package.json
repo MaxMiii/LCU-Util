@@ -1,10 +1,10 @@
 {
-  "name": "cybertech-system",
+  "name": "lcu-util",
   "version": "1.0.0",
   "private": true,
-  "description": "赛博科技管理系统 - 基于 Vue3 + Electron + Element-Plus",
+  "description": "LCU-Util - 基于 Vue3 + Electron + Element-Plus",
   "main": "electron/main.js",
-  "author": "CyberTech",
+  "author": "LCU-Util",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
