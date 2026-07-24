@@ -1,5 +1,7 @@
 # CyberTech System
 
+[English Version](README.en.md)
+
 LCU-Util —— 基于 Vue 3 + Electron + TypeScript 的现代桌面应用，集成英雄联盟客户端（LCU）API，提供实时召唤师信息、比赛记录、百科大全等功能。
 
 ---
