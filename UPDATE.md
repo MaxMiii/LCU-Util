@@ -20,7 +20,3 @@
 - **EncyclopediaView `useTranslation` 报错** — `i18next-vue` 的 `useTranslation()` 不返回 `i18n` 实例，改为直接导入 i18n 模块
 - **滚动条超出圆角** — profile-card 设置 `overflow: hidden auto` + 自定义滚动条样式（不滚动透明，悬停显示）
 
-### 品牌与文档
-- **品牌重命名** — 全项目 "CyberTech/赛博/" 统一替换为 "LCU-Util"（package.json、electron-builder、i18n、README 等 8 个文件）
-- **README 英文版** — 新增 `README.en.md`，中英文版本互加跳转链接
-- **Logo** — 生成 256×256 ICO 格式 favicon.ico（大写 L 蓝青渐变带发光效果）
