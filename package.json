@@ -9,7 +9,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmidt",
     "electron:dev": "nodemon --exec \"npm run build && cross-env NODE_ENV=development electron ./electron/main.js\" --watch src --ext ts,vue,scss,json",
     "electron:build": "npm run build && electron-builder --config electron-builder.config.js",
     "electron:serve": "concurrently \"npm run serve\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron ./electron/main.js\"",
@@ -19,6 +19,7 @@
     "animate.css": "^4.1.1",
     "axios": "^1.18.1",
     "core-js": "^3.8.3",
+    "echarts": "^6.1.0",
     "element-plus": "^2.2.0",
     "i18next": "^26.3.6",
     "i18next-vue": "^5.4.0",
@@ -26,7 +27,9 @@
     "sass": "^1.54.0",
     "sass-loader": "^13.0.2",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.16"
+    "vue-echarts": "^8.0.1",
+    "vue-router": "^4.0.16",
+    "ws": "^8.16.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

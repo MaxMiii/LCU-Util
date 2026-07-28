@@ -16,7 +16,17 @@
  */
 
 const { contextBridge, ipcRenderer } = require('electron')
-const WebSocket = require('ws')
+
+// ws 包用于 Node.js WebSocket 桥接（绕过 Chromium WebSocket 限制）
+// 需要放在 dependencies 中，否则打包后 require 失败会导致整个 preload 崩溃
+let WebSocket
+let wsError = null
+try {
+  WebSocket = require('ws')
+} catch (e) {
+  wsError = e.message
+  console.warn('[preload] ws 模块加载失败:', e.message)
+}
 
 let _nodeWs = null
 
@@ -26,6 +36,11 @@ let _nodeWs = null
  * 使用 ws 包直接从 Node.js 环境连接 LCU WebSocket
  */
 function createNodeWs(url, authHeader, callbacks) {
+  if (!WebSocket) {
+    console.warn('[createNodeWs] ws 模块不可用：', wsError)
+    callbacks.onError?.('ws 模块不可用: ' + wsError)
+    return
+  }
   destroyNodeWs()
 
   console.log('[createNodeWs] 连接:', url.replace(/Basic .+/, 'Basic ***'))
@@ -101,6 +116,7 @@ function destroyNodeWs() {
  * @property {() => Promise<boolean>} isMaximized - 获取窗口是否最大化
  * @property {() => Promise<{authToken?: string; port?: string; error?: string}>} getLeagueClientInfo - 获取 LeagueClient 认证信息
  * @property {NodeWsBridge} nodeWs - Node.js WebSocket 桥接
+ * @property {() => void} openDevTools - 打开开发者工具
  */
 contextBridge.exposeInMainWorld('electronAPI', {
   /**
@@ -143,6 +159,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
    */
   getLeagueClientInfo: () => {
     return ipcRenderer.invoke('get-league-client-info')
+  },
+
+  /**
+   * 打开开发者工具（生产环境手动打开调试）
+   */
+  openDevTools: () => {
+    ipcRenderer.send('open-dev-tools')
   },
 
   /**

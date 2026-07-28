@@ -21,7 +21,7 @@
       <!-- 上部：个人信息 -->
       <div class="profile-main">
         <el-avatar :size="72" class="profile-avatar">
-          <img :src="avatarUrl" alt="头像" />
+          <img :src="avatarUrl" :alt="$t('index.avatar')" />
         </el-avatar>
         <div class="profile-info">
           <h2 class="profile-name">{{ summonerData.gameName || summonerData.displayName }}</h2>
@@ -84,13 +84,18 @@
         </div>
       </div>
 
+      <!-- 评分趋势图 -->
+      <div v-if="matchHistory.length" class="chart-section">
+        <div class="chart-section__header">{{ $t('index.chartTitle') }}</div>
+        <VChart :option="chartOption" autoresize class="score-chart" />
+      </div>
+
       <!-- 最近比赛 -->
       <div v-if="matchHistory.length" class="match-section">
         <div class="match-section__header">{{ $t('match.recent') }}</div>
         <div class="match-list">
           <el-table
             :data="matchHistory"
-            height="172"
             size="small"
             style="width: 100%"
             row-class-name="match-item"
@@ -110,6 +115,11 @@
                   />
                   <span class="match-item__champ-name">{{ championNameMap[row.participants[0]?.championId]?.name || row.participants[0]?.championId }}</span>
                 </div>
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('match.col.gameMode')" width="80" align="center">
+              <template #default="{ row }">
+                <span class="match-item__mode">{{ tGameMode(row.gameMode) }}</span>
               </template>
             </el-table-column>
             <el-table-column :label="$t('match.col.result')" width="50" align="center">
@@ -161,7 +171,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { createLcuClient, get, getLcuBaseUrl } from '@/utils/lcu-request'
 import { useChatStore, type SummonerData } from '@/stores/chat-store'
-import { getMatchDisplay, isWin } from '@/utils/match-score'
+import { getMatchDisplay, isWin, calculateScore } from '@/utils/match-score'
+import VChart from 'vue-echarts'
+import 'echarts'
 
 const { t } = useTranslation()
 
@@ -170,6 +182,98 @@ const chatInfo = computed(() => chatStore.chatInfo)
 const summonerData = computed(() => chatStore.summonerData)
 const matchHistory = computed(() => chatStore.matchHistory)
 const championNameMap = computed(() => chatStore.championNameMap)
+
+/** 最近20场评分趋势图配置 */
+const chartOption = computed(() => {
+  const matches = matchHistory.value
+  if (!matches.length) return {}
+
+  const labels: string[] = []
+  const scores: number[] = []
+  const colors: string[] = []
+  const avgScores: number[] = []
+
+  let totalScore = 0
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const m = matches[i]
+    const stats = m.participants[0]?.stats
+    const score = stats ? calculateScore(stats) : 0
+    const win = stats ? isWin(stats.win) : false
+
+    labels.push('')
+    scores.push(score)
+    colors.push(win ? '#22c55e' : '#ef4444')
+    totalScore += score
+  }
+  const avg = totalScore / scores.length
+  scores.forEach(() => avgScores.push(Math.round(avg * 10) / 10))
+
+  return {
+    tooltip: {
+      trigger: 'item',
+      formatter: (params: any) => {
+        const match = matches[matches.length - 1 - params.dataIndex]
+        const stats = match?.participants[0]?.stats
+        const win = stats ? isWin(stats.win) : false
+        return t('index.tooltip', {
+          index: params.dataIndex + 1,
+          score: params.value,
+          result: win ? t('match.win') : t('match.lose'),
+          kills: stats?.kills || 0,
+          deaths: stats?.deaths || 0,
+          assists: stats?.assists || 0,
+        })
+      },
+    },
+    grid: { left: 40, right: 20, top: 25, bottom: 25 },
+    xAxis: {
+      type: 'category',
+      data: labels,
+      axisLabel: { show: false },
+      axisLine: { show: false },
+      axisTick: { show: false },
+    },
+    yAxis: {
+      type: 'value',
+      min: 0,
+      max: 10,
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)' } },
+      axisLabel: { color: 'var(--text-tertiary)', fontSize: 10 },
+    },
+    series: [
+      {
+        type: 'line',
+        data: scores.map((v, i) => ({
+          value: v,
+          itemStyle: { color: colors[i] },
+        })),
+        smooth: true,
+        showSymbol: true,
+        symbol: 'circle',
+        symbolSize: 6,
+        lineStyle: { width: 2, color: 'var(--accent)' },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(74, 158, 255, 0.25)' },
+              { offset: 1, color: 'rgba(74, 158, 255, 0)' },
+            ],
+          },
+        },
+      },
+      {
+        type: 'line',
+        data: avgScores.map(v => ({ value: v })),
+        smooth: true,
+        showSymbol: false,
+        lineStyle: { width: 1, type: 'dashed', color: 'rgba(255,255,255,0.2)' },
+        z: 1,
+      },
+    ],
+  }
+})
 
 /** 背景装饰数据接口 */
 interface BackdropData {
@@ -396,8 +500,9 @@ onMounted(() => {
   height: 100%;
   display: flex;
   // align-items: center;
-  margin-top: 40px;
+  // margin-top: 40px;
   justify-content: center;
+  overflow: hidden;
 }
 
 /* ==============================
@@ -413,7 +518,29 @@ onMounted(() => {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--card-shadow);
+  overflow: hidden auto;
+  max-height: calc(100vh - 140px);
   // height: 350px;
+}
+
+/* card 内部滚动条：不滚动时透明，滚动时显示 */
+.profile-card::-webkit-scrollbar {
+  width: 4px;
+}
+
+.profile-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.profile-card::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+
+.profile-card:hover::-webkit-scrollbar-thumb,
+.profile-card:active::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(74, 144, 226, 0.4), rgba(123, 104, 238, 0.35));
 }
 
 /* 骨架屏布局 */
@@ -549,7 +676,7 @@ onMounted(() => {
  * 最近比赛
  * ============================== */
 .match-section {
-  margin-top: 16px;
+  margin-top: 10px;
   padding-top: 14px;
   border-top: 1px solid var(--card-border);
 }
@@ -651,6 +778,12 @@ onMounted(() => {
   white-space: nowrap;
 }
 
+.match-item__mode {
+  color: var(--text-secondary);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
 /* 评分 & 标签 */
 .match-item__score-wrap {
   display: flex;
@@ -687,5 +820,26 @@ onMounted(() => {
   color: var(--text-tertiary);
   font-size: 11px;
   font-weight: 500;
+}
+
+/* ==============================
+ * 评分趋势图
+ * ============================== */
+.chart-section {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--card-border);
+}
+
+.chart-section__header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.score-chart {
+  width: 100%;
+  height: 200px;
 }
 </style>

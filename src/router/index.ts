@@ -44,7 +44,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'settings',
         name: 'DashboardSettings',
-        component: () => import(/* webpackChunkName: "dashboard" */ '@/views/DashboardPlaceholder.vue'),
+        component: () => import(/* webpackChunkName: "dashboard" */ '@/views/main/SettingsView.vue'),
         meta: { title: '系统设置' },
       },
       {

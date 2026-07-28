@@ -22,7 +22,7 @@
           <circle cx="10" cy="10" r="8"/>
           <path d="M2 10h16M10 2a15 15 0 010 16M10 2a15 15 0 00-8 8"/>
         </svg>
-        <span>连接设置</span>
+        <span>{{ $t('api.connectionSettings') }}</span>
       </div>
 
       <div class="conn-row">
@@ -32,7 +32,7 @@
         </div>
         <div class="conn-field conn-field--port">
           <label>Port</label>
-          <input v-model="port" placeholder="端口" class="api-input" />
+          <input v-model="port" :placeholder="$t('api.port')" class="api-input" />
         </div>
         <div class="conn-field conn-field--btn">
           <button class="api-btn api-btn--lcu" @click="fetchLcuInfo" :disabled="lcuLoading">
@@ -40,7 +40,7 @@
               <path d="M10 3a7 7 0 017 7v3l2 2H1l2-2v-3a7 7 0 017-7z"/>
               <path d="M7 16a3 3 0 006 0"/>
             </svg>
-            {{ lcuLoading ? '获取中...' : '获取 LCU 信息' }}
+            {{ lcuLoading ? $t('api.fetching') : $t('api.fetchLcuInfo') }}
           </button>
           <span v-if="lcuStatus" class="lcu-status" :class="{ connected: lcuConnected }">
             {{ lcuStatus }}
@@ -50,17 +50,17 @@
 
       <div class="conn-row">
         <div class="conn-field conn-field--auth">
-          <label>认证方式</label>
+          <label>{{ $t('api.authType') }}</label>
           <select v-model="authType" class="api-select">
-            <option value="none">无认证</option>
+            <option value="none">{{ $t('api.none') }}</option>
             <option value="basic">Basic Auth</option>
             <option value="bearer">Bearer Token</option>
             <option value="none1">none</option>
           </select>
         </div>
         <div class="conn-field conn-field--token" v-if="authType !== 'none'">
-          <label>Token / 密码</label>
-          <input v-model="authToken" type="text" placeholder="输入认证令牌" class="api-input" />
+          <label>{{ $t('api.tokenPassword') }}</label>
+          <input v-model="authToken" type="text" :placeholder="$t('api.inputToken')" class="api-input" />
         </div>
       </div>
     </section>
@@ -89,7 +89,7 @@
         <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M2 5l8-3 8 3M2 5v10l8 3M2 5l8 3m0-3v10m8-10v10l-8 3"/>
         </svg>
-        <span>请求配置</span>
+        <span>{{ $t('api.requestConfig') }}</span>
       </div>
 
       <!-- Method + Path -->
@@ -106,14 +106,14 @@
           <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor">
             <path d="M1 1l18 9L1 19V1z"/>
           </svg>
-          {{ loading ? '发送中...' : '发送请求' }}
+          {{ loading ? $t('api.sending') : $t('api.sendRequest') }}
         </button>
         <button class="api-btn api-btn--reset" @click="resetRequest">
           <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M1 4v6h6M19 16v-6h-6"/>
             <path d="M17.4 6A9 9 0 003 8.5M2.6 14A9 9 0 0017 11.5"/>
           </svg>
-          重置
+          {{ $t('api.reset') }}
         </button>
       </div>
 
@@ -123,14 +123,14 @@
           <svg viewBox="0 0 20 20" width="14" height="14" :class="{ rotated: showHeaders }" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform .2s">
             <path d="M7 3l5 7-5 7"/>
           </svg>
-          请求头
+          {{ $t('api.headers') }}
           <span class="param-count">{{ headers.length }}</span>
-          <button class="param-add-btn" @click.stop="headers.push({ key: '', value: '' })">+ 添加</button>
+          <button class="param-add-btn" @click.stop="headers.push({ key: '', value: '' })">{{ $t('api.add') }}</button>
         </div>
         <div v-show="showHeaders" class="params-body">
           <div v-for="(h, i) in headers" :key="'h-' + i" class="param-row">
-            <input v-model="h.key" placeholder="Header Name" class="api-input api-input--param-key" />
-            <input v-model="h.value" placeholder="Value" class="api-input api-input--param-val" />
+            <input v-model="h.key" :placeholder="$t('api.headerName')" class="api-input api-input--param-key" />
+            <input v-model="h.value" :placeholder="$t('api.value')" class="api-input api-input--param-val" />
             <button class="param-del-btn" @click="headers.splice(i, 1)">×</button>
           </div>
         </div>
@@ -142,14 +142,14 @@
           <svg viewBox="0 0 20 20" width="14" height="14" :class="{ rotated: showQuery }" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform .2s">
             <path d="M7 3l5 7-5 7"/>
           </svg>
-          查询参数
+          {{ $t('api.queryParams') }}
           <span class="param-count">{{ queryParams.length }}</span>
-          <button class="param-add-btn" @click.stop="queryParams.push({ key: '', value: '' })">+ 添加</button>
+          <button class="param-add-btn" @click.stop="queryParams.push({ key: '', value: '' })">{{ $t('api.add') }}</button>
         </div>
         <div v-show="showQuery" class="params-body">
           <div v-for="(p, i) in queryParams" :key="'q-' + i" class="param-row">
-            <input v-model="p.key" placeholder="参数名" class="api-input api-input--param-key" />
-            <input v-model="p.value" placeholder="值" class="api-input api-input--param-val" />
+            <input v-model="p.key" :placeholder="$t('api.paramName')" class="api-input api-input--param-key" />
+            <input v-model="p.value" :placeholder="$t('api.paramValue')" class="api-input api-input--param-val" />
             <button class="param-del-btn" @click="queryParams.splice(i, 1)">×</button>
           </div>
         </div>
@@ -162,7 +162,7 @@
             <rect x="2" y="3" width="16" height="14" rx="2"/>
             <path d="M6 7h8M6 10h8M6 13h4"/>
           </svg>
-          请求体 (JSON)
+          {{ $t('api.requestBody') }}
         </div>
         <textarea
           v-model="body"
@@ -182,7 +182,7 @@
         <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 13l3 4L15 4"/>
         </svg>
-        <span>响应结果</span>
+        <span>{{ $t('api.responseResult') }}</span>
         <span v-if="response" class="resp-meta">
           <span class="resp-badge" :class="'status-' + Math.floor(response.status / 100)">{{ response.status }} {{ response.statusText }}</span>
           <span class="resp-info">{{ response.time }}ms</span>
@@ -204,7 +204,7 @@
           <svg viewBox="0 0 20 20" width="14" height="14" :class="{ rotated: showRespHeaders }" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform .2s">
             <path d="M7 3l5 7-5 7"/>
           </svg>
-          响应头
+          {{ $t('api.responseHeaders') }}
         </div>
         <div v-show="showRespHeaders" class="params-body">
           <div v-for="(v, k) in response.headers" :key="k" class="param-row param-row--resp">
@@ -217,8 +217,8 @@
       <!-- 响应体 -->
       <div v-if="response" class="resp-body-wrapper">
         <div class="resp-body-header">
-          <span>响应体</span>
-          <button class="api-btn api-btn--copy" @click="copyResponse">复制</button>
+          <span>{{ $t('api.responseBody') }}</span>
+          <button class="api-btn api-btn--copy" @click="copyResponse">{{ $t('api.copy') }}</button>
         </div>
         <pre class="resp-body"><code v-html="highlightJson(response.data)"></code></pre>
       </div>
@@ -236,21 +236,21 @@
           <path d="M3 8v4M17 8v4"/>
           <path d="M10 3v14"/>
         </svg>
-        <span>WebSocket 测试</span>
-        <span v-if="wsStatus === 'connected'" class="ws-badge ws-badge--on">已连接</span>
-        <span v-else-if="wsStatus === 'connecting'" class="ws-badge ws-badge--pending">连接中</span>
-        <span v-else class="ws-badge ws-badge--off">未连接</span>
+        <span>{{ $t('api.wsTest') }}</span>
+        <span v-if="wsStatus === 'connected'" class="ws-badge ws-badge--on">{{ $t('api.wsConnected') }}</span>
+        <span v-else-if="wsStatus === 'connecting'" class="ws-badge ws-badge--pending">{{ $t('api.wsConnecting') }}</span>
+        <span v-else class="ws-badge ws-badge--off">{{ $t('api.wsDisconnected') }}</span>
       </div>
 
       <!-- 连接设置 -->
       <div class="ws-conn-row">
         <div class="conn-field conn-field--port">
           <label>Port</label>
-          <input v-model="wsPort" placeholder="端口" class="api-input" />
+          <input v-model="wsPort" :placeholder="$t('api.port')" class="api-input" />
         </div>
         <div class="conn-field conn-field--token">
           <label>Token</label>
-          <input v-model="wsToken" type="text" placeholder="auth token" class="api-input" />
+          <input v-model="wsToken" type="text" :placeholder="$t('api.inputToken')" class="api-input" />
         </div>
         <div class="conn-field conn-field--btn">
           <button
@@ -258,12 +258,12 @@
             class="api-btn api-btn--send"
             @click="wsConnect"
             :disabled="wsStatus === 'connecting'"
-          >连接</button>
+          >{{ $t('api.connect') }}</button>
           <button
             v-else
             class="api-btn api-btn--reset"
             @click="wsDisconnect"
-          >断开</button>
+          >{{ $t('api.disconnect') }}</button>
         </div>
       </div>
 
@@ -272,9 +272,9 @@
         <input
           v-model="wsSubscribeUri"
           class="api-input api-input--path"
-          placeholder="事件 URI，留空订阅全部，如 lol-summoner/v1/current-summoner"
+          :placeholder="$t('api.subscribeUriPlaceholder')"
         />
-        <button class="api-btn api-btn--lcu" @click="wsSubscribe" :disabled="wsStatus !== 'connected'">订阅</button>
+        <button class="api-btn api-btn--lcu" @click="wsSubscribe" :disabled="wsStatus !== 'connected'">{{ $t('api.subscribe') }}</button>
       </div>
 
       <!-- 已订阅列表 -->
@@ -284,15 +284,15 @@
           :key="uri"
           class="ws-sub-tag"
           @click="wsUnsubscribe(uri)"
-          :title="'点击取消订阅: ' + (uri || '全部事件')"
-        >{{ uri || '全部事件' }} ×</span>
+          :title="'点击取消订阅: ' + (uri || $t('api.allEvents'))"
+        >{{ uri || $t('api.allEvents') }} ×</span>
       </div>
 
       <!-- 事件日志 -->
       <div class="ws-log-header">
-        <span>事件日志</span>
+        <span>{{ $t('api.eventLog') }}</span>
         <div class="ws-log-actions">
-          <button class="api-btn api-btn--copy" @click="wsRawLog = ''">清空</button>
+          <button class="api-btn api-btn--copy" @click="wsRawLog = ''">{{ $t('api.clear') }}</button>
         </div>
       </div>
       <textarea
@@ -300,7 +300,7 @@
         readonly
         class="ws-raw-log"
         :value="wsRawLog"
-        placeholder="暂无事件，请先连接并订阅"
+        :placeholder="$t('api.noEvents')"
       ></textarea>
     </section>
     </template>
@@ -315,8 +315,11 @@
  * - 响应状态码 / 耗时 / 大小 / 响应体展示
  */
 import { ref, computed, watch, onUnmounted, nextTick } from 'vue'
+import { useTranslation } from 'i18next-vue'
 import { LcuWebSocket } from '../../utils/lcu-websocket'
 import { createLcuClient, rawRequest } from '../../utils/lcu-request'
+
+const { t } = useTranslation()
 
 // ==============================
 // 顶部菜单
@@ -369,13 +372,13 @@ const lcuConnected = ref(false)
 
 async function fetchLcuInfo(): Promise<void> {
   if (!window.electronAPI) {
-    lcuStatus.value = '非 Electron 环境'
+    lcuStatus.value = t('api.nonElectron')
     lcuConnected.value = false
     return
   }
 
   lcuLoading.value = true
-  lcuStatus.value = '正在获取...'
+  lcuStatus.value = t('api.fetchingStatus')
 
   try {
     const info = await window.electronAPI.getLeagueClientInfo()
@@ -388,12 +391,12 @@ async function fetchLcuInfo(): Promise<void> {
       authType.value = 'basic'
       authToken.value = info.authToken || ''
       createLcuClient(info.port || '', info.authToken || '')
-      lcuStatus.value = '✓ LCU 已连接 | 端口: ' + info.port
+      lcuStatus.value = t('api.lcuConnected', { port: info.port || '' })
       lcuConnected.value = true
     }
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e)
-    lcuStatus.value = '获取失败: ' + msg
+    lcuStatus.value = t('api.fetchFailed', { msg })
     lcuConnected.value = false
   } finally {
     lcuLoading.value = false
@@ -433,7 +436,7 @@ const showRespHeaders = ref(false)
 
 async function sendRequest(): Promise<void> {
   if (!baseUrl.value || !path.value) {
-    error.value = '请填写 Base URL 和请求路径'
+    error.value = t('api.fillUrlAndPath')
     return
   }
 

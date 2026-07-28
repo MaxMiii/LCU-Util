@@ -204,8 +204,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { createLcuClient, get } from '../../utils/lcu-request'
+import i18n from '../../i18n'
 
 const { t } = useTranslation()
+
+function getDdLocale(): string {
+  return i18n.language.replace('-', '_')
+}
 
 // ==============================
 // 类型定义
@@ -309,7 +314,7 @@ async function fetchChampions(): Promise<void> {
 
   try {
     const res = await fetch(
-      'https://ddragon.leagueoflegends.com/cdn/16.14.1/data/zh_CN/champion.json',
+      `https://ddragon.leagueoflegends.com/cdn/16.14.1/data/${getDdLocale()}/champion.json`,
     )
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}: ${res.statusText}`)
@@ -317,10 +322,10 @@ async function fetchChampions(): Promise<void> {
     const json: ChampionResponse = await res.json()
     // 将对象转为数组并按名称排序
     const list = Object.values(json.data)
-    list.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'))
+    list.sort((a, b) => a.name.localeCompare(b.name, i18n.language))
     champions.value = list
   } catch (e) {
-    championError.value = `加载失败: ${e instanceof Error ? e.message : String(e)}`
+    championError.value = t('encyclopedia.loadError', { msg: e instanceof Error ? e.message : String(e) })
   } finally {
     championLoading.value = false
   }
@@ -375,16 +380,31 @@ const mapError = ref('')
 
 async function fetchMaps(): Promise<void> {
   if (maps.value.length) return
-  if (!window.electronAPI) {
-    mapError.value = '非 Electron 环境，无法获取地图分类'
-    return
-  }
+
+  // 硬编码地图名作为 fallback（Electron 不可用时）
+  const fallbackMaps: MapInfo[] = [
+    { id: 11, gameModeName: t('mapName.sr') },
+    { id: 12, gameModeName: t('mapName.ha') },
+    { id: 21, gameModeName: t('mapName.nb') },
+    { id: 22, gameModeName: t('mapName.tft') },
+    { id: 30, gameModeName: t('mapName.ha') },
+    { id: 33, gameModeName: t('mapName.cherry') },
+    { id: 35, gameModeName: t('mapName.tft') },
+  ]
 
   mapLoading.value = true
   try {
+    if (!window.electronAPI) {
+      maps.value = fallbackMaps
+      if (maps.value.length && selectedMapId.value === null) {
+        selectedMapId.value = maps.value[0].id
+      }
+      return
+    }
+
     const info = await window.electronAPI.getLeagueClientInfo()
     if (info.error || !info.authToken || !info.port) {
-      mapError.value = info.error || '无法获取 LCU 连接信息'
+      mapError.value = info.error || t('encyclopedia.noLcuInfo')
       return
     }
     createLcuClient(info.port, info.authToken)
@@ -402,7 +422,7 @@ async function fetchMaps(): Promise<void> {
       selectedMapId.value = maps.value[0].id
     }
   } catch (e) {
-    mapError.value = `地图加载失败: ${e instanceof Error ? e.message : String(e)}`
+    mapError.value = t('encyclopedia.mapLoadError', { msg: e instanceof Error ? e.message : String(e) })
   } finally {
     mapLoading.value = false
   }
@@ -431,7 +451,7 @@ async function fetchItems(): Promise<void> {
 
   try {
     const res = await fetch(
-      'https://ddragon.leagueoflegends.com/cdn/16.14.1/data/zh_CN/item.json',
+      `https://ddragon.leagueoflegends.com/cdn/16.14.1/data/${getDdLocale()}/item.json`,
     )
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}: ${res.statusText}`)
@@ -441,11 +461,11 @@ async function fetchItems(): Promise<void> {
       ...item,
       id,
     }))
-    list.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'))
+    list.sort((a, b) => a.name.localeCompare(b.name, i18n.language))
     items.value = list
     itemFetched.value = true
   } catch (e) {
-    itemError.value = `加载失败: ${e instanceof Error ? e.message : String(e)}`
+    itemError.value = t('encyclopedia.loadError', { msg: e instanceof Error ? e.message : String(e) })
   } finally {
     itemLoading.value = false
   }
@@ -483,7 +503,7 @@ async function openSkinView(champion: Champion): Promise<void> {
 
   try {
     const res = await fetch(
-      `https://ddragon.leagueoflegends.com/cdn/16.14.1/data/zh_CN/champion/${champion.id}.json`,
+      `https://ddragon.leagueoflegends.com/cdn/16.14.1/data/${getDdLocale()}/champion/${champion.id}.json`,
     )
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
 

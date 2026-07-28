@@ -194,16 +194,21 @@ ipcMain.on('window-maximize-toggle', () => {
   }
 })
 
-// 关闭窗口
+// 关闭窗口并退出应用
 ipcMain.on('window-close', () => {
-  if (mainWindow) {
-    mainWindow.close()
-  }
+  app.quit()
 })
 
 // 获取窗口当前是否最大化状态（供渲染进程更新按钮图标）
 ipcMain.handle('window-is-maximized', () => {
   return mainWindow ? mainWindow.isMaximized() : false
+})
+
+// 打开开发者工具（由渲染进程设置页面调用）
+ipcMain.on('open-dev-tools', () => {
+  if (mainWindow) {
+    mainWindow.webContents.openDevTools({ mode: 'detach' })
+  }
 })
 
 // ==============================

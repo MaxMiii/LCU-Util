@@ -54,6 +54,7 @@ export interface MatchParticipant {
 export interface MatchEntry {
   gameCreationDate: string
   gameDuration: number
+  gameMode: string
   participants: MatchParticipant[]
 }
 
@@ -226,7 +227,7 @@ export const useChatStore = defineStore('chat', () => {
     try {
       const data = await get<MatchHistoryResponse>(
         '/lol-match-history/v1/products/lol/current-summoner/matches',
-        { begIndex: 0, endIndex: 10 },
+        { begIndex: 0, endIndex: 20 },
       )
       if (data?.games?.games) {
         matchHistory.value = data.games.games

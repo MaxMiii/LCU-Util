@@ -59,6 +59,8 @@ interface ElectronAPI {
   getLeagueClientInfo: () => Promise<LeagueClientInfo>
   /** Node.js WebSocket 桥接（绕过 Chromium WebSocket 限制） */
   nodeWs: NodeWsBridge
+  /** 打开开发者工具 */
+  openDevTools: () => void
 }
 
 interface Window {
